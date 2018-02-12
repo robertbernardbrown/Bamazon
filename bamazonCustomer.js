@@ -35,14 +35,18 @@ connection.query("SELECT * FROM products", function (error, results) {
 	displayGoods(results);
 
 	function whichProduct () {
-		inquirer.prompt([
-			{
-				type: "input",
-				name: "buyProduct",
-				message: "Which product would you like to purchase? (Please enter by ID)"
+		inquirer.prompt([{
+			type: "input",
+			name: "buyProduct",
+			message: "Which product would you like to purchase? (Please enter by ID)",
+			validate: function (input) {
+				if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= productArr.length) {
+					return true;
+				}
+				return "Please enter a valid number";
 			}
-		]).then( answers => {
-			console.log(answers.buyProduct);
+		}]).then( answers => {
+
 			let purchase;
 			for (let i = 0; i < productArr.length; i++) {
 				let element = productArr[i];
@@ -51,7 +55,7 @@ connection.query("SELECT * FROM products", function (error, results) {
 				}
 				
 			}
-			console.log(purchase);
+			console.log("You've chosen " + purchase.product_name);
 
 		});
 	}
