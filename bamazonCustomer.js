@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
 	host     : "localhost",
 	user     : "root",
 	password : "root",
@@ -15,17 +15,48 @@ connection.query("SELECT * FROM products", function (error, results) {
 	if (error) throw error;
 
 	console.log("Welcome! Here are all the items for sale:");
-	for (var i = 0; i < results.length; i++) {
-		var element = results[i];
-		var itemId = element.item_id;
-		var productName = element.product_name;
-		var departmentName = element.department_name;
-		var price = element.price;
-		var quantity = element.stock_quantity;
+	var productArr = [];
 
-		console.log("ID: " + itemId + " | Product: " + productName + " | Department: " + departmentName + " | Price: $" + price + " | Stock:" + quantity);
+	function displayGoods (goods) {
+		for (let i = 0; i < goods.length; i++) {
+			let element = goods[i];
+			let itemId = element.item_id;
+			let productName = element.product_name;
+			let departmentName = element.department_name;
+			let price = element.price;
+			let quantity = element.stock_quantity;
+			productArr.push(element);
+
+			console.log("ID: " + itemId + " | Product: " + productName + " | Department: " + departmentName + " | Price: $" + price + " | Stock: " + quantity);
 		
+		}
 	}
+
+	displayGoods(results);
+
+	function whichProduct () {
+		inquirer.prompt([
+			{
+				type: "input",
+				name: "buyProduct",
+				message: "Which product would you like to purchase? (Please enter by ID)"
+			}
+		]).then( answers => {
+			console.log(answers.buyProduct);
+			let purchase;
+			for (let i = 0; i < productArr.length; i++) {
+				let element = productArr[i];
+				if (element.item_id === parseInt(answers.buyProduct)) {
+					purchase = element;
+				}
+				
+			}
+			console.log(purchase);
+
+		});
+	}
+
+	whichProduct();
 
 });
    
