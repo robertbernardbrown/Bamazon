@@ -57,6 +57,25 @@ connection.query("SELECT * FROM products", function (error, results) {
 			}
 			console.log("You've chosen " + purchase.product_name);
 
+			inquirer.prompt([{
+				type: "input",
+				name: "quant",
+				message: "How much would you like to purchase?",
+				validate: function (input) {
+					console.log(isNaN(input));
+					if (isNaN(input)) {
+						return "Please enter a number";
+					}
+					else if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= purchase.stock_quantity) {
+						return true;
+					}
+					return "Insufficient Quantity!";
+				}
+			}]).then( answers => {
+
+				console.log(answers);
+
+			});
 		});
 	}
 
