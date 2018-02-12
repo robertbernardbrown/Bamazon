@@ -28,4 +28,7 @@ VALUES
 ("Milk", "Dairy", 3, 10),
 ("Cereal", "Dry Goods", 3, 10);
 
-DELETE FROM bamazon_db.products WHERE product_name = null
+DELETE FROM bamazon_db.products WHERE product_name = null;
+
+UPDATE bamazon_db.products SET stock_quantity = 6 WHERE item_id = 6;
+

@@ -46,7 +46,7 @@ connection.query("SELECT * FROM products", function (error, results) {
 				return "Please enter a valid number";
 			}
 		}]).then( answers => {
-
+			
 			let purchase;
 			for (let i = 0; i < productArr.length; i++) {
 				let element = productArr[i];
@@ -69,18 +69,26 @@ connection.query("SELECT * FROM products", function (error, results) {
 					else if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= purchase.stock_quantity) {
 						return true;
 					}
-					return "Insufficient Quantity!";
+					return "Apologies, we don't have that many available. Please try a smaller amount.";
 				}
 			}]).then( answers => {
 
-				console.log(answers);
+				let amount = answers.quant;
+				let cost = purchase.price * amount;
+				let newAmount = purchase.stock_quantity - amount;
+				console.log("Order processed\n=================\nPurchase: " + purchase.product_name + "\nQuantity: " + amount + "\nPrice: $" + cost + "\n=================");
+				
+				connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + purchase.item_id, () => {
+
+					console.log("DB updated");
+					connection.end();
+
+				});
+
 
 			});
 		});
 	}
 
 	whichProduct();
-
 });
-   
-connection.end();
