@@ -32,6 +32,90 @@ function managerPrompt () {
 			console.log("ID: " + inventory.item_id + " | Product: " + inventory.product_name + " | Department: " + inventory.product_name + " | Price: $" + inventory.price + " | Stock: " + inventory.stock_quantity);
 		}
 	}
+    
+	function newProduct () {
+		inquirer.prompt([{
+			type: "input",
+			name: "productName",
+			message: "Please enter the name of the product you would like to add:",
+		}]).then( answers => {
+
+			let brandNewItem = answers.productName;
+                
+			inquirer.prompt([{
+				type: "input",
+				name: "productCost",
+				message: "Please enter a price for this product:",
+				validate: function (input) {
+					if (isNaN(input) === false) {
+						return true;
+					}
+					return "Please enter a valid number";
+				}
+			}]).then( answers => {
+    
+				let brandNewItemCost = parseInt(answers.productCost);
+                    
+				inquirer.prompt([{
+					type: "input",
+					name: "productStock",
+					message: "Please enter the quantity for this product:",
+					validate: function (input) {
+						if (isNaN(input) === false) {
+							return true;
+						}
+						return "Please enter a valid number";
+					}
+				}]).then( answers => {
+        
+					let brandNewItemQuant = parseInt(answers.productStock);
+                        
+					inquirer.prompt([{
+						type: "list",
+						name: "productDept",
+						message: "Finally, please enter a department for this product:",
+						choices: [
+							"Produce",
+							"Poultry",
+							"Dry Goods",
+							"Desserts",
+							"Frozen"
+						]
+					}]).then( answers => {
+            
+						let brandNewItemDept = answers.productDept;
+                        
+						console.log("Product draft:\n==============\nProduct Name: " + brandNewItem + "\nCost: " + brandNewItemCost + "\nStock: " + brandNewItemQuant + "\nDepartment: " + brandNewItemDept + "\n==============");
+            
+						inquirer.prompt([{
+							type: "confirm",
+							name: "newProductConfirm",
+							message: "Is everything correct?",
+						}]).then( answers => {
+                
+							let brandNewItemConfirm = answers.newProductConfirm;
+                            
+							if (brandNewItemConfirm) {
+								connection.query("INSERT INTO bamazon_db.products (product_name, department_name, price, stock_quantity) VALUES ('" + brandNewItem + "','" + brandNewItemDept + "'," + brandNewItemCost + "," + brandNewItemQuant + ")", (error) => {
+									if (error) throw error;
+									console.log("New product processed");
+									connection.end();
+								});
+
+							} else {
+								newProduct();
+							}
+                            
+						});
+
+					});
+        
+				});
+    
+			});
+
+		});
+	}
 
 	inquirer.prompt([{
 		type: "list",
@@ -108,6 +192,8 @@ function managerPrompt () {
             
 		case "Add new product":
         
+			newProduct();
+
 			break;
 		}});
 }
