@@ -22,12 +22,10 @@ connection.query("SELECT * FROM products", function (error, results) {
 			let element = goods[i];
 			let itemId = element.item_id;
 			let productName = element.product_name;
-			let departmentName = element.department_name;
 			let price = element.price;
-			let quantity = element.stock_quantity;
 			productArr.push(element);
 
-			console.log("ID: " + itemId + " | Product: " + productName + " | Department: " + departmentName + " | Price: $" + price + " | Stock: " + quantity);
+			console.log("ID: " + itemId + " | Product: " + productName + " | Price: $" + price);
 		
 		}
 	}
@@ -62,7 +60,6 @@ connection.query("SELECT * FROM products", function (error, results) {
 				name: "quant",
 				message: "How much would you like to purchase?",
 				validate: function (input) {
-					console.log(isNaN(input));
 					if (isNaN(input)) {
 						return "Please enter a number";
 					}
@@ -80,7 +77,6 @@ connection.query("SELECT * FROM products", function (error, results) {
 				
 				connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + purchase.item_id, () => {
 
-					console.log("DB updated");
 					connection.end();
 
 				});
