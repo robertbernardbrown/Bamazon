@@ -29,7 +29,7 @@ function managerPrompt () {
 	function displayGoods (arr) {
 		for (var i = 0; i < arr.length; i++) {
 			var inventory = arr[i];
-			console.log("ID: " + inventory.item_id + " | Product: " + inventory.product_name + " | Department: " + inventory.product_name + " | Price: $" + inventory.price + " | Stock: " + inventory.stock_quantity);
+			console.log("ID: " + inventory.item_id + " | Product: " + inventory.product_name + " | Department: " + inventory.department_name + " | Price: $" + inventory.price + " | Stock: " + inventory.stock_quantity);
 		}
 	}
     
@@ -142,7 +142,7 @@ function managerPrompt () {
 			for (let j = 0; j < productArr.length; j++) {
 				let lowInv = productArr[j];
 				if (lowInv.stock_quantity < 5) {
-					console.log("ID: " + lowInv.item_id + " | Product: " + lowInv.product_name + " | Department: " + lowInv.product_name + " | Price: $" + lowInv.price + " | Stock: " + lowInv.stock_quantity);
+					console.log("ID: " + lowInv.item_id + " | Product: " + lowInv.product_name + " | Department: " + lowInv.department_name + " | Price: $" + lowInv.price + " | Stock: " + lowInv.stock_quantity);
 				}
 			}
 			break;
@@ -195,8 +195,8 @@ function managerPrompt () {
 			newProduct();
 
 			break;
+            
+		default:
+			return "Please choose an option";
 		}});
 }
-
-// Add New Product
-// If a manager selects Add New Product, it should allow the manager to add a completely new product to the store
