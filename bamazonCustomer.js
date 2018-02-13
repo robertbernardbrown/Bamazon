@@ -72,12 +72,17 @@ connection.query("SELECT * FROM products", function (error, results) {
 
 				let amount = answers.quant;
 				let cost = purchase.price * amount;
+				let addToSales = cost + purchase.product_sales;
 				let newAmount = purchase.stock_quantity - amount;
 				console.log("Order processed\n=================\nPurchase: " + purchase.product_name + "\nQuantity: " + amount + "\nPrice: $" + cost + "\n=================");
 				
 				connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + purchase.item_id, () => {
 
-					connection.end();
+					connection.query("UPDATE bamazon_db.products SET product_sales = " + addToSales + " WHERE item_id = " + purchase.item_id, () => {
+
+						connection.end();
+	
+					});
 
 				});
 
