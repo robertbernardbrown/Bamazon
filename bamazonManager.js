@@ -99,7 +99,8 @@ function managerPrompt () {
 								connection.query("INSERT INTO bamazon_db.products (product_name, department_name, price, stock_quantity) VALUES ('" + brandNewItem + "','" + brandNewItemDept + "'," + brandNewItemCost + "," + brandNewItemQuant + ")", (error) => {
 									if (error) throw error;
 									console.log("New product processed");
-									connection.end();
+									fillItemArr();
+									managerPrompt();
 								});
 
 							} else {
@@ -120,12 +121,13 @@ function managerPrompt () {
 	inquirer.prompt([{
 		type: "list",
 		name: "managersChoice",
-		message: "Please choose an action:",
+		message: "Please choose an action (or click CTL->C to exit):",
 		choices: [
 			"View products for sale",
 			"View low inventory",
 			"Add to inventory",
-			"Add new product"
+			"Add new product",
+			"Quit",
 		]
 	}]).then( answers => {
 
@@ -135,6 +137,7 @@ function managerPrompt () {
 		case "View products for sale":
 			console.log("Manager View\n============\nItems for sale:");
 			displayGoods(productArr);
+			managerPrompt();
 			break;
             
 		case "View low inventory":
@@ -145,6 +148,7 @@ function managerPrompt () {
 					console.log("ID: " + lowInv.item_id + " | Product: " + lowInv.product_name + " | Department: " + lowInv.department_name + " | Price: $" + lowInv.price + " | Stock: " + lowInv.stock_quantity);
 				}
 			}
+			managerPrompt();
 			break;
             
 		case "Add to inventory":
@@ -182,18 +186,22 @@ function managerPrompt () {
 					connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + choice, (error) => {
 						if (error) throw error;
 						console.log("Command processed\n=================\nItem: " + item.product_name + "\nNew quantity: " + newAmount + "\n=================");
-						connection.end();
+						fillItemArr();
+						managerPrompt();
 					});
 				});
                 
 			});
-        
 			break;
             
 		case "Add new product":
         
 			newProduct();
+			break;
 
+		case "Quit":
+        
+			connection.end();
 			break;
             
 		default:
