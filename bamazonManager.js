@@ -29,7 +29,11 @@ function managerPrompt () {
 	function displayGoods (arr) {
 		for (var i = 0; i < arr.length; i++) {
 			var inventory = arr[i];
-			console.log("ID: " + inventory.item_id + " | Product: " + inventory.product_name + " | Department: " + inventory.department_name + " | Price: $" + inventory.price + " | Stock: " + inventory.stock_quantity);
+			console.log("ID: " + inventory.item_id + 
+			" | Product: " 	   + inventory.product_name + 
+			" | Department: "  + inventory.department_name + 
+			" | Price: $" 	   + inventory.price + 
+			" | Stock: " 	   + inventory.stock_quantity);
 		}
 	}
     
@@ -85,7 +89,11 @@ function managerPrompt () {
             
 						let brandNewItemDept = answers.productDept;
                         
-						console.log("Product draft:\n==============\nProduct Name: " + brandNewItem + "\nCost: " + brandNewItemCost + "\nStock: " + brandNewItemQuant + "\nDepartment: " + brandNewItemDept + "\n==============");
+						console.log("Product draft:\n==============\n" + 
+						"Product Name: " + brandNewItem + 
+						"\nCost: " 	 	 + brandNewItemCost + 
+						"\nStock: " 	 + brandNewItemQuant + 
+						"\nDepartment: " + brandNewItemDept + "\n==============");
             
 						inquirer.prompt([{
 							type: "confirm",
@@ -96,7 +104,10 @@ function managerPrompt () {
 							let brandNewItemConfirm = answers.newProductConfirm;
                             
 							if (brandNewItemConfirm) {
-								connection.query("INSERT INTO bamazon_db.products (product_name, department_name, price, stock_quantity) VALUES ('" + brandNewItem + "','" + brandNewItemDept + "'," + brandNewItemCost + "," + brandNewItemQuant + ")", (error) => {
+								connection.query("INSERT INTO bamazon_db.products" + 
+												" SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?", 
+								[brandNewItem, brandNewItemDept, brandNewItemCost ,brandNewItemQuant], 
+								(error) => {
 									if (error) throw error;
 									console.log("New product processed");
 									fillItemArr();
