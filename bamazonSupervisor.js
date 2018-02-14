@@ -2,23 +2,21 @@ const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
 const connection = mysql.createConnection({
-	host     : "localhost",
-	user     : "root",
-	password : "root",
-	database : "bamazon_db",
+	host: "localhost",
+	user: "root",
+	password: "root",
+	database: "bamazon_db",
 	socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
 });
 
-let query;
 connection.connect();
 
-
-function newDeptFunc () {
+function newDeptFunc() {
 	inquirer.prompt([{
 		type: "input",
 		name: "newDept",
 		message: "What's the name of the new department:",
-	}]).then( answers => {
+	}]).then(answers => {
 
 		let newDept = answers.newDept;
 
@@ -32,25 +30,25 @@ function newDeptFunc () {
 				}
 				return "Please enter a valid number";
 			}
-		}]).then( answers => {
+		}]).then(answers => {
 
 			let overHead = answers.overHead;
 			console.log("New Department: " + newDept +
-						"\nOverhead Cost: " + overHead);
+				"\nOverhead Cost: " + overHead);
 
 			inquirer.prompt([{
 				type: "confirm",
 				name: "confirm",
 				message: "Does everything look correct?",
-			}]).then( answers => {
+			}]).then(answers => {
 
 				let confirmation = answers.confirm;
 
 				if (confirmation) {
 					console.log("New department created");
-					query = connection.query("INSERT INTO bamazon_db.departments" 
-									+ " SET department_name = ?,"
-									+ " over_head_costs = ?",[newDept, overHead],
+					connection.query("INSERT INTO bamazon_db.departments" +
+						" SET department_name = ?," +
+						" over_head_costs = ?", [newDept, overHead],
 					function (error) {
 						if (error) throw error;
 					});
@@ -70,7 +68,7 @@ function newDeptFunc () {
 
 supervisorPrompt();
 
-function supervisorPrompt () {
+function supervisorPrompt() {
 	inquirer.prompt([{
 		type: "list",
 		name: "supervisorInitial",
@@ -79,21 +77,20 @@ function supervisorPrompt () {
 			"View product sales by department",
 			"Create new department",
 		]
-	}]).then( answers => {
+	}]).then(answers => {
 
 		let supervisorChoice = answers.supervisorInitial;
-		let query;
 
 		switch (supervisorChoice) {
 
 		case "View product sales by department":
 
-			query = connection.query("SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit" 
-									+ " FROM products"
-									+ " INNER JOIN departments ON products.department_name = departments.department_name"
-									+ " GROUP BY department_name"
-									+ " ORDER BY department_id asc"
-				, function (error, res) {
+			connection.query("SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit" +
+					" FROM products" +
+					" INNER JOIN departments ON products.department_name = departments.department_name" +
+					" GROUP BY department_name" +
+					" ORDER BY department_id asc",
+			function (error, res) {
 				if (error) throw error;
 				console.table(res);
 			});
