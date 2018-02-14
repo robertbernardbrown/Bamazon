@@ -76,10 +76,8 @@ connection.query("SELECT * FROM products", function (error, results) {
 				let newAmount = purchase.stock_quantity - amount;
 				console.log("Order processed\n=================\nPurchase: " + purchase.product_name + "\nQuantity: " + amount + "\nPrice: $" + cost + "\n=================");
 				
-				connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + purchase.item_id, () => {
-
-					connection.query("UPDATE bamazon_db.products SET product_sales = " + addToSales + " WHERE item_id = " + purchase.item_id, () => {
-
+				connection.query("UPDATE bamazon_db.products SET stock_quantity = ? WHERE item_id = ?",[newAmount, purchase.item_id],() => {
+					connection.query("UPDATE bamazon_db.products SET product_sales = ? WHERE item_id = ?",[addToSales, purchase.item_id],() => {
 						connection.end();
 	
 					});
