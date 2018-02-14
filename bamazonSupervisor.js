@@ -9,14 +9,72 @@ const connection = mysql.createConnection({
 	socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
 });
 
+let query;
+connection.connect();
+
+
+function newDeptFunc () {
+	inquirer.prompt([{
+		type: "input",
+		name: "newDept",
+		message: "What's the name of the new department:",
+	}]).then( answers => {
+
+		let newDept = answers.newDept;
+
+		inquirer.prompt([{
+			type: "input",
+			name: "overHead",
+			message: "What's our over head cost of this department:",
+			validate: function (input) {
+				if (isNaN(input) === false) {
+					return true;
+				}
+				return "Please enter a valid number";
+			}
+		}]).then( answers => {
+
+			let overHead = answers.overHead;
+			console.log("New Department: " + newDept +
+						"\nOverhead Cost: " + overHead);
+
+			inquirer.prompt([{
+				type: "confirm",
+				name: "confirm",
+				message: "Does everything look correct?",
+			}]).then( answers => {
+
+				let confirmation = answers.confirm;
+
+				if (confirmation) {
+					console.log("New department created");
+					query = connection.query("INSERT INTO bamazon_db.departments" 
+									+ " SET department_name = ?,"
+									+ " over_head_costs = ?",[newDept, overHead],
+					function (error) {
+						if (error) throw error;
+					});
+
+					supervisorPrompt();
+
+				} else {
+					newDeptFunc();
+				}
+
+			});
+
+		});
+
+	});
+}
+
 supervisorPrompt();
 
 function supervisorPrompt () {
-	connection.connect();
 	inquirer.prompt([{
 		type: "list",
 		name: "supervisorInitial",
-		message: "Please choose an action:",
+		message: "Please choose an action (Or CTR->C to quit):",
 		choices: [
 			"View product sales by department",
 			"Create new department",
@@ -42,7 +100,7 @@ function supervisorPrompt () {
 			break;
 
 		case "Create new department":
-			console.log("hi");
+			newDeptFunc();
 			break;
 
 		case "Quit":

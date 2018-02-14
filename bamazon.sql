@@ -43,8 +43,10 @@ VALUES
 ("Frozen", 300),
 ("Dairy", 10);
 
-SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit
+/*SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit
 FROM products
 INNER JOIN departments ON products.department_name = departments.department_name
 GROUP BY department_name
-ORDER BY department_id asc;
+ORDER BY department_id asc*/
+
+SELECT * FROM departments;
