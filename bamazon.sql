@@ -14,15 +14,6 @@ CREATE TABLE products (
     PRIMARY KEY(item_id)
 );
 
-CREATE TABLE departments (
-	department_id INTEGER(10) AUTO_INCREMENT NOT NULL,
-    department_name VARCHAR(30),
-    over_head_costs INTEGER(10),
-    PRIMARY KEY(department_id)
-);
-
-SELECT * FROM bamazon_db.products;
-
 INSERT INTO bamazon_db.products (product_name, department_name, price, stock_quantity, product_sales)
 VALUES 
 ("Bananas", "Produce", 3, 10, 0),
@@ -36,7 +27,24 @@ VALUES
 ("Milk", "Dairy", 3, 10, 0),
 ("Cereal", "Dry Goods", 3, 10, 0);
 
-DELETE FROM bamazon_db.products WHERE product_name = null;
+CREATE TABLE departments (
+	department_id INTEGER(10) AUTO_INCREMENT NOT NULL,
+    department_name VARCHAR(30),
+    over_head_costs INTEGER(10),
+    PRIMARY KEY(department_id)
+);
 
-UPDATE bamazon_db.products SET stock_quantity = 6 WHERE item_id = 6;
+INSERT INTO bamazon_db.departments (department_name, over_head_costs)
+VALUES 
+("Produce", 30),
+("Poultry", 22),
+("Dry Goods", 70),
+("Desserts", 15),
+("Frozen", 300),
+("Dairy", 10);
 
+SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit
+FROM products
+INNER JOIN departments ON products.department_name = departments.department_name
+GROUP BY department_name
+ORDER BY department_id asc;
