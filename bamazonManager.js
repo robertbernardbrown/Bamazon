@@ -102,11 +102,12 @@ function managerPrompt () {
 						}]).then( answers => {
                 
 							let brandNewItemConfirm = answers.newProductConfirm;
-                            
+							let brandNewItemSales = 0;
+							
 							if (brandNewItemConfirm) {
 								connection.query("INSERT INTO bamazon_db.products" + 
-												" SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?", 
-								[brandNewItem, brandNewItemDept, brandNewItemCost ,brandNewItemQuant], 
+												" SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?, product_sales = ?", 
+								[brandNewItem, brandNewItemDept, brandNewItemCost ,brandNewItemQuant, brandNewItemSales], 
 								(error) => {
 									if (error) throw error;
 									console.log("New product processed");
@@ -156,7 +157,11 @@ function managerPrompt () {
 			for (let j = 0; j < productArr.length; j++) {
 				let lowInv = productArr[j];
 				if (lowInv.stock_quantity < 5) {
-					console.log("ID: " + lowInv.item_id + " | Product: " + lowInv.product_name + " | Department: " + lowInv.department_name + " | Price: $" + lowInv.price + " | Stock: " + lowInv.stock_quantity);
+					console.log("ID: " + lowInv.item_id + 
+					" | Product: " 	   + lowInv.product_name + 
+					" | Department: "  + lowInv.department_name + 
+					" | Price: $" 	   + lowInv.price + 
+					" | Stock: " 	   + lowInv.stock_quantity);
 				}
 			}
 			managerPrompt();
@@ -194,9 +199,15 @@ function managerPrompt () {
 					let choiceAmount = parseInt(answers.managersAmount);
 					let newAmount = choiceAmount + item.stock_quantity;
                     
-					connection.query("UPDATE bamazon_db.products SET stock_quantity = " + newAmount + " WHERE item_id = " + choice, (error) => {
+					connection.query("UPDATE bamazon_db.products" + 
+									" SET stock_quantity = ?" + 
+									" WHERE item_id = ?" 
+						,[newAmount, choice],(error) => {
 						if (error) throw error;
-						console.log("Command processed\n=================\nItem: " + item.product_name + "\nNew quantity: " + newAmount + "\n=================");
+						console.log("Command processed\n=================\n" + 
+									"Item: " 		   + item.product_name + 
+									"\nNew quantity: " + newAmount + 
+									"\n=================");
 						fillItemArr();
 						managerPrompt();
 					});

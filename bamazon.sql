@@ -49,4 +49,4 @@ INNER JOIN departments ON products.department_name = departments.department_name
 GROUP BY department_name
 ORDER BY department_id asc*/
 
-SELECT * FROM departments;
+SELECT * FROM products;

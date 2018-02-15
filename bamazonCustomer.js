@@ -1,5 +1,8 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+const CustomerConst = require("./customerConst");
+const SuperConst = require("./superConst");
+const cTable = require("console.table");
 const connection = mysql.createConnection({
 	host     : "localhost",
 	user     : "root",
@@ -14,7 +17,8 @@ connection.query("SELECT * FROM products", function (error, results) {
 	if (error) throw error;
 
 	console.log("Welcome! Here are all the items for sale:");
-	var productArr = [];
+	let custProductArr = [];
+	let superProductArr = [];
 
 	function displayGoods (goods) {
 		for (let i = 0; i < goods.length; i++) {
@@ -22,11 +26,16 @@ connection.query("SELECT * FROM products", function (error, results) {
 			let itemId = element.item_id;
 			let productName = element.product_name;
 			let price = element.price;
-			productArr.push(element);
+			let department = element.department_name;
+			let stock = element.stock_quantity;
+			let sales = element.product_sales;
+			let newCustInstance = new CustomerConst(itemId, productName, price);
+			let newSuperInstance = new SuperConst(itemId, productName, price, department, stock, sales);
+			custProductArr.push(newCustInstance);
+			superProductArr.push(newSuperInstance);
 
-			console.log("ID: " + itemId + " | Product: " + productName + " | Price: $" + price);
-		
 		}
+		console.table(custProductArr);
 	}
 
 	displayGoods(results);
@@ -37,22 +46,21 @@ connection.query("SELECT * FROM products", function (error, results) {
 			name: "buyProduct",
 			message: "Which product would you like to purchase? (Please enter by ID)",
 			validate: function (input) {
-				if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= productArr.length) {
+				if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= superProductArr.length) {
 					return true;
 				}
 				return "Please enter a valid number";
 			}
 		}]).then( answers => {
-			
 			let purchase;
-			for (let i = 0; i < productArr.length; i++) {
-				let element = productArr[i];
-				if (element.item_id === parseInt(answers.buyProduct)) {
+			for (let i = 0; i < superProductArr.length; i++) {
+				let element = superProductArr[i];
+				if (element.id === parseInt(answers.buyProduct)) {
 					purchase = element;
 				}
 				
 			}
-			console.log("You've chosen " + purchase.product_name);
+			console.log("You've chosen " + purchase.product);
 
 			inquirer.prompt([{
 				type: "input",
@@ -62,31 +70,36 @@ connection.query("SELECT * FROM products", function (error, results) {
 					if (isNaN(input)) {
 						return "Please enter a number";
 					}
-					else if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= purchase.stock_quantity) {
+					else if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= purchase.stock) {
 						return true;
 					}
-					return "Apologies, we don't have that many available. Please try a smaller amount.";
+					return "Apologies, we only have " + purchase.stock + " available. Please try a smaller amount.";
 				}
 			}]).then( answers => {
 
-				let amount = answers.quant;
+				let amount = parseInt(answers.quant);
 				let cost = purchase.price * amount;
-				let addToSales = cost + purchase.product_sales;
-				let newAmount = purchase.stock_quantity - amount;
-				console.log("Order processed\n=================\nPurchase: " + purchase.product_name + "\nQuantity: " + amount + "\nPrice: $" + cost + "\n=================");
+				let addToSales = cost + purchase.sales;
+				let newAmount = purchase.stock - amount;
+				console.log("Order processed\n=================\n" + 
+							"Purchase: "   + purchase.product + 
+							"\nQuantity: " + amount + 
+							"\nPrice: $"   + cost + 
+							"\n=================");
 				
-				connection.query("UPDATE bamazon_db.products SET stock_quantity = ? WHERE item_id = ?",[newAmount, purchase.item_id],() => {
-					connection.query("UPDATE bamazon_db.products SET product_sales = ? WHERE item_id = ?",[addToSales, purchase.item_id],() => {
+				connection.query("UPDATE bamazon_db.products" + 
+								" SET stock_quantity = ?" + 
+								" WHERE item_id = ?",
+				[newAmount, purchase.id],() => {
+					connection.query("UPDATE bamazon_db.products" + 
+									" SET product_sales = ?" + 
+									" WHERE item_id = ?",
+					[addToSales, purchase.id],() => {
 						connection.end();
-	
 					});
-
 				});
-
-
 			});
 		});
 	}
-
 	whichProduct();
 });
