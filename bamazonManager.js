@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-let productArr = [];
+const cTable = require("console.table");
+let productArr;
 const connection = mysql.createConnection({
 	host     : "localhost",
 	user     : "root",
@@ -25,17 +26,6 @@ function fillItemArr () {
 }
 
 function managerPrompt () {
-
-	function displayGoods (arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var inventory = arr[i];
-			console.log("ID: " + inventory.item_id + 
-			" | Product: " 	   + inventory.product_name + 
-			" | Department: "  + inventory.department_name + 
-			" | Price: $" 	   + inventory.price + 
-			" | Stock: " 	   + inventory.stock_quantity);
-		}
-	}
     
 	function newProduct () {
 		inquirer.prompt([{
@@ -103,7 +93,7 @@ function managerPrompt () {
                 
 							let brandNewItemConfirm = answers.newProductConfirm;
 							let brandNewItemSales = 0;
-							
+
 							if (brandNewItemConfirm) {
 								connection.query("INSERT INTO bamazon_db.products" + 
 												" SET product_name = ?, department_name = ?, price = ?, stock_quantity = ?, product_sales = ?", 
@@ -148,27 +138,24 @@ function managerPrompt () {
 		switch (input) {
 		case "View products for sale":
 			console.log("Manager View\n============\nItems for sale:");
-			displayGoods(productArr);
+			console.table(productArr);
 			managerPrompt();
 			break;
             
 		case "View low inventory":
 			console.log("Manager View\n============\nLow Inventory:");
+			var lowInv = [];
 			for (let j = 0; j < productArr.length; j++) {
-				let lowInv = productArr[j];
-				if (lowInv.stock_quantity < 5) {
-					console.log("ID: " + lowInv.item_id + 
-					" | Product: " 	   + lowInv.product_name + 
-					" | Department: "  + lowInv.department_name + 
-					" | Price: $" 	   + lowInv.price + 
-					" | Stock: " 	   + lowInv.stock_quantity);
+				if (productArr[j].stock_quantity < 5) {
+					lowInv.push(productArr[j]);
 				}
 			}
+			console.table(lowInv);
 			managerPrompt();
 			break;
             
 		case "Add to inventory":
-			displayGoods(productArr);
+			console.table(productArr);
 			inquirer.prompt([{
 				type: "input",
 				name: "managersChoice",
