@@ -76,6 +76,7 @@ function supervisorPrompt() {
 		choices: [
 			"View product sales by department",
 			"Create new department",
+			"Quit"
 		]
 	}]).then(answers => {
 
@@ -85,14 +86,15 @@ function supervisorPrompt() {
 
 		case "View product sales by department":
 
-			connection.query("SELECT departments.department_id, products.department_name, departments.over_head_costs, products.product_sales, (products.product_sales - departments.over_head_costs) AS total_profit" +
+			connection.query("SELECT departments.department_id as Department_ID, products.department_name as Departments, departments.over_head_costs as Over_Head_Costs, SUM(products.product_sales) as Sales, (SUM(products.product_sales) - departments.over_head_costs) AS Total_Profit" +
 					" FROM products" +
 					" INNER JOIN departments ON products.department_name = departments.department_name" +
-					" GROUP BY department_name" +
-					" ORDER BY department_id asc",
+					" GROUP BY Departments" +
+					" ORDER BY Department_ID asc",
 			function (error, res) {
 				if (error) throw error;
 				console.table(res);
+				supervisorPrompt();
 			});
 			break;
 
