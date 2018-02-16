@@ -27,14 +27,18 @@ function fillItemArr () {
 }
 
 function managerPrompt () {
-    
-	function newProduct (arr) {
+
+	function newProduct () {
 
 		let deptArr = [];
-		for (var i = 0; i < arr.length; i++) {
-			var element = arr[i];
-			deptArr.push(element.department_name);
-		}
+		connection.query("SELECT departments.department_name FROM departments GROUP BY department_name ORDER BY department_name asc", 
+			(error, results) => {
+				if (error) throw error;
+				for (let i = 0; i < results.length; i++) {
+					let element = results[i].department_name;
+					deptArr.push(element);
+				}
+			});
 
 		inquirer.prompt([
 			{
@@ -68,13 +72,7 @@ function managerPrompt () {
 				type: "list",
 				name: "productDept",
 				message: "Finally, please enter a department for this product:",
-				choices: [
-					"Produce",
-					"Poultry",
-					"Dry Goods",
-					"Desserts",
-					"Frozen"
-				]
+				choices: deptArr
 			}
 		]).then( answers => {
 
