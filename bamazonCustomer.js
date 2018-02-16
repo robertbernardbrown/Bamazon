@@ -11,11 +11,11 @@ const connection = mysql.createConnection({
 	port: 8889
 });
    
-connection.connect();
+connection.connect(function () {
+	console.log("Welcome! Here are all the items for sale:");
+	startBuy();
+});
 
-startBuy();
-
-console.log("Welcome! Here are all the items for sale:");
    
 function startBuy (){
 	connection.query("SELECT * FROM products", function (error, results) {
@@ -100,20 +100,23 @@ function startBuy (){
 						});
 					});
 
-					inquirer.prompt([{
-						type: "confirm",
-						name: "finalConf",
-						message: "Would you like to continue shopping?",
-					}]).then( ({finalConf}) => {
+					function continueFunc () {
+						inquirer.prompt([{
+							type: "confirm",
+							name: "finalConf",
+							message: "Would you like to continue shopping?",
+						}]).then( ({finalConf}) => {
 
-						if (finalConf) {
-							startBuy();
-						} else {
-							connection.end();
-							console.log("Logging off");
-							return;
-						}
-					});
+							if (finalConf) {
+								startBuy();
+							} else {
+								connection.end();
+								console.log("Logging off");
+								return;
+							}
+						});
+					}
+					continueFunc();
 				});
 			});
 		}
