@@ -8,15 +8,15 @@ A command-line Amazon-like app to pracice MySQL queries
 
 ## Preview
 
-## Customer View
+### Customer View
 ------
 <img src="Mocks/customer.gif" width="700"/>
 
-## Manager View
+### Manager View
 ------
 <img src="Mocks/manager.gif" width="700"/>
 
-## Supervisor View
+### Supervisor View
 ------
 <img src="Mocks/supervisor.gif" width="700"/>
 
