@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
 	user     : "root",
 	password : "root",
 	database : "bamazon_db",
-	socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
+	port: 8889
 });
    
 connection.connect();
@@ -55,11 +55,11 @@ function startBuy (){
 					}
 					return "Please enter a valid number";
 				}
-			}]).then( answers => {
+			}]).then( ({buyProduct}) => {
 				let purchase;
 				for (let i = 0; i < superProductArr.length; i++) {
 					let element = superProductArr[i];
-					if (element.id === parseInt(answers.buyProduct)) {
+					if (element.id === parseInt(buyProduct)) {
 						purchase = element;
 					}
 				
@@ -79,9 +79,9 @@ function startBuy (){
 						}
 						return "Apologies, we only have " + purchase.stock + " available. Please try a smaller amount.";
 					}
-				}]).then( answers => {
+				}]).then( ({quant}) => {
 
-					let amount = parseInt(answers.quant);
+					let amount = parseInt(quant);
 					let cost = purchase.price * amount;
 					let addToSales = cost + purchase.sales;
 					let newAmount = purchase.stock - amount;
@@ -93,12 +93,10 @@ function startBuy (){
 				
 					connection.query("UPDATE bamazon_db.products" + 
 								" SET stock_quantity = ?" + 
-								" WHERE item_id = ?",
-					[newAmount, purchase.id],() => {
+								" WHERE item_id = ?", [newAmount, purchase.id],() => {
 						connection.query("UPDATE bamazon_db.products" + 
 									" SET product_sales = ?" + 
-									" WHERE item_id = ?",
-						[addToSales, purchase.id],() => {
+									" WHERE item_id = ?", [addToSales, purchase.id],() => {
 						});
 					});
 
@@ -106,10 +104,9 @@ function startBuy (){
 						type: "confirm",
 						name: "finalConf",
 						message: "Would you like to continue shopping?",
-					}]).then( answers => {
+					}]).then( ({finalConf}) => {
 
-						let conf = answers.finalConf;
-						if (conf) {
+						if (finalConf) {
 							startBuy();
 						} else {
 							connection.end();
