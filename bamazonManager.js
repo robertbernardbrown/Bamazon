@@ -10,9 +10,10 @@ const connection = mysql.createConnection({
 	port: 8889
 });
 
-connection.connect();
-fillItemArr();
-managerPrompt();
+connection.connect( function () {
+	fillItemArr();
+	managerPrompt();
+});
 
 function fillItemArr () {
 	productArr = [];
