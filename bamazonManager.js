@@ -136,21 +136,19 @@ function managerPrompt () {
 
 	function addToProducts (arr) {
 		console.table(arr);
-		inquirer.prompt([{
-			type: "input",
-			name: "managersChoice",
-			message: "To which item would you like to add (please enter item id):",
-			validate: function (input) {
-				if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= arr.length) {
-					return true;
+		inquirer.prompt([
+			{
+				type: "input",
+				name: "managersChoice",
+				message: "To which item would you like to add (please enter item id):",
+				validate: function (input) {
+					if (isNaN(input) === false && parseInt(input) > 0 && parseInt(input) <= arr.length) {
+						return true;
+					}
+					return "Please enter a valid number";
 				}
-				return "Please enter a valid number";
-			}
-		}]).then( answers => {
-
-			let choice = parseInt(answers.managersChoice);
-                
-			inquirer.prompt([{
+			},
+			{
 				type: "input",
 				name: "managersAmount",
 				message: "How much inventory would you like to add:",
@@ -160,26 +158,26 @@ function managerPrompt () {
 					}
 					return "Please enter a valid number";
 				}
-			}]).then( answers => {
+			}
+		]).then( answers => {
 
-				let item = arr[choice - 1];
-				let choiceAmount = parseInt(answers.managersAmount);
-				let newAmount = choiceAmount + item.stock_quantity;
+			let choice = parseInt(answers.managersChoice);
+			let item = arr[choice - 1];
+			let choiceAmount = parseInt(answers.managersAmount);
+			let newAmount = choiceAmount + item.stock_quantity;
                     
-				connection.query("UPDATE bamazon_db.products" + 
+			connection.query("UPDATE bamazon_db.products" + 
 									" SET stock_quantity = ?" + 
 									" WHERE item_id = ?" 
-					,[newAmount, choice],(error) => {
-					if (error) throw error;
-					console.log("Command processed\n=================\n" + 
+				,[newAmount, choice],(error) => {
+				if (error) throw error;
+				console.log("Command processed\n=================\n" + 
 									"Item: " 		   + item.product_name + 
 									"\nNew quantity: " + newAmount + 
 									"\n=================");
-					fillItemArr();
-					managerPrompt();
-				});
+				fillItemArr();
+				managerPrompt();
 			});
-                
 		});
 	}
 
@@ -194,11 +192,8 @@ function managerPrompt () {
 			"Add new product",
 			"Quit",
 		]
-	}]).then( answers => {
-
-		let input = answers.managersChoice;
-    
-		switch (input) {
+	}]).then( ({managersChoice}) => {
+		switch (managersChoice) {
 		case "View products for sale":
 			viewProducts(productArr);
 			break;
