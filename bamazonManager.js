@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
 	user     : "root",
 	password : "root",
 	database : "bamazon_db",
-	socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
+	port: 8889
 });
 
 connection.connect();
@@ -27,7 +27,14 @@ function fillItemArr () {
 
 function managerPrompt () {
     
-	function newProduct () {
+	function newProduct (arr) {
+
+		let deptArr = [];
+		for (var i = 0; i < arr.length; i++) {
+			var element = arr[i];
+			deptArr.push(element.department_name);
+		}
+
 		inquirer.prompt([{
 			type: "input",
 			name: "productName",
@@ -204,7 +211,7 @@ function managerPrompt () {
 			break;
             
 		case "Add new product":
-        
+
 			newProduct();
 			break;
 
