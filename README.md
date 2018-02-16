@@ -1,6 +1,6 @@
 # Bamazon
 
-A command-line Amazon-like app to pracice MySQL queries
+A command-line Amazon-like app to pracice MySQL queries. A user can access three views: 'Customer', 'Manager', and 'Supervisor'. Each view has different actions it can take to view or adjust data in a MySQL DB.
 
 ## Screenshot
 
@@ -46,6 +46,7 @@ Please feel free to branch off and make some tweaks and make a PR. Open to any c
 
 * Remember usernames and passwords
 * User purchase histories
+* Restrict username access based on status of 'Customer', 'Manager', or 'Supervisor'
 
 ## Authors
 
