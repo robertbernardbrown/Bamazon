@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
 	user: "root",
 	password: "root",
 	database: "bamazon_db",
-	socketPath: "/Applications/MAMP/tmp/mysql/mysql.sock"
+	port: 8889
 });
 
 connection.connect();
@@ -100,6 +100,7 @@ function supervisorPrompt() {
 
 		case "Create new department":
 			newDeptFunc();
+			supervisorPrompt();
 			break;
 
 		case "Quit":
