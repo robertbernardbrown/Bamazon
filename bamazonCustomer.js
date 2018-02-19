@@ -2,7 +2,7 @@ const mysql = require("mysql");
 const CustomerConst = require("./customerConst");
 const SuperConst = require("./superConst");
 const cTable = require("console.table");
-const whichProduct = require("./bamazonCustomerQuestions");
+const whichProduct = require("./Questions/bamazonCustomerQuestions");
 const connection = mysql.createConnection({
 	host     : "localhost",
 	user     : "root",

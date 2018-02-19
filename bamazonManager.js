@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
-const managerQuestions = require("./bamazonManagerQuestions");
+const managerQuestions = require("./Questions/bamazonManagerQuestions");
 let productArr;
 const connection = mysql.createConnection({
 	host     : "localhost",
