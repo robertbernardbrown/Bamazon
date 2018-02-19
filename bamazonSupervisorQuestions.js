@@ -9,15 +9,13 @@ const connection = mysql.createConnection({
 });
 
 function newDeptFunc(supervisorPrompt) {
-	inquirer.prompt([{
-		type: "input",
-		name: "newDept",
-		message: "What's the name of the new department:",
-	}]).then(answers => {
-
-		let newDept = answers.newDept;
-
-		inquirer.prompt([{
+	inquirer.prompt([
+		{
+			type: "input",
+			name: "newDept",
+			message: "What's the name of the new department:",
+		},
+		{
 			type: "input",
 			name: "overHead",
 			message: "What's our over head cost of this department:",
@@ -27,35 +25,34 @@ function newDeptFunc(supervisorPrompt) {
 				}
 				return "Please enter a valid number";
 			}
-		}]).then(answers => {
+		}
+	]).then(answers => {
 
-			let overHead = answers.overHead;
-			console.log("New Department: " + newDept +
-            "\nOverhead Cost: " + overHead);
+		let newDept = answers.newDept;
+		let overHead = answers.overHead;
+        
+		console.log("New Department: " + newDept + "\nOverhead Cost: " + overHead);
 
-			inquirer.prompt([{
-				type: "confirm",
-				name: "confirm",
-				message: "Does everything look correct?",
-			}]).then(answers => {
+		inquirer.prompt([{
+			type: "confirm",
+			name: "confirm",
+			message: "Does everything look correct?",
+		}]).then(({confirm}) => {
 
-				let confirmation = answers.confirm;
-
-				if (confirmation) {
-					console.log("New department created");
-					connection.query("INSERT INTO bamazon_db.departments" +
+			if (confirm) {
+				console.log("New department created");
+				connection.query("INSERT INTO bamazon_db.departments" +
                     " SET department_name = ?," +
                     " over_head_costs = ?", [newDept, overHead],
-					function (error) {
-						if (error) throw error;
-					});
+				(error) => {
+					if (error) throw error;
+				});
+                
+				supervisorPrompt();
 
-					supervisorPrompt();
-
-				} else {
-					newDeptFunc();
-				}
-			});
+			} else {
+				newDeptFunc();
+			}
 		});
 	});
 }
@@ -66,7 +63,7 @@ function viewProductSales(supervisorPrompt) {
                 " INNER JOIN departments ON products.department_name = departments.department_name" +
                 " GROUP BY Departments" +
                 " ORDER BY Department_ID asc",
-	function (error, res) {
+	(error, res) => {
 		if (error) throw error;
 		console.table(res);
 		supervisorPrompt();
