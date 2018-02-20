@@ -16,7 +16,7 @@ connection.connect(function () {
 	startBuy();
 });
 
-//Start Customer prompt and fill Supervisor level and Customer level array objects
+//Start Customer prompt and fill Supervisor level and Customer level array objects. Customer array is used to display products to user, ,superisor array is used to update DB
 function startBuy (){
 	connection.query("SELECT * FROM products", function (error, results) {
 		if (error) throw error;

@@ -11,38 +11,34 @@ const connection = mysql.createConnection({
 });
 
 connection.connect(function() {
-	supervisorFunc();
+	supervisorPrompt();
 });
 
-function supervisorFunc () {
-
-	supervisorPrompt();
-
-	function supervisorPrompt() {
-		inquirer.prompt([{
-			type: "list",
-			name: "supervisorInitial",
-			message: "Please choose an action (Or CTR->C to quit):",
-			choices: [
-				"View product sales by department",
-				"Create new department",
-				"Quit"
-			]
-		}]).then(answers => {
-			let supervisorChoice = answers.supervisorInitial;
-			switch (supervisorChoice) {
-			case "View product sales by department":
-				supervisorQuestions.viewProductSales(supervisorPrompt);
-				break;
-			case "Create new department":
-				supervisorQuestions.newDeptFunc(supervisorPrompt);
-				break;
-			case "Quit":
-				connection.end();
-				break;
-			default:
-				"Please choose a valid option";
-			}
-		});
-	}
+//allows supervisor to interact with DB or view the department data
+function supervisorPrompt() {
+	inquirer.prompt([{
+		type: "list",
+		name: "supervisorInitial",
+		message: "Please choose an action (Or CTR->C to quit):",
+		choices: [
+			"View product sales by department",
+			"Create new department",
+			"Quit"
+		]
+	}]).then(answers => {
+		let supervisorChoice = answers.supervisorInitial;
+		switch (supervisorChoice) {
+		case "View product sales by department":
+			supervisorQuestions.viewProductSales(supervisorPrompt);
+			break;
+		case "Create new department":
+			supervisorQuestions.newDeptFunc(supervisorPrompt);
+			break;
+		case "Quit":
+			connection.end();
+			break;
+		default:
+			"Please choose a valid option";
+		}
+	});
 }

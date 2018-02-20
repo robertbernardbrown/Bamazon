@@ -16,6 +16,7 @@ connection.connect( function () {
 	managerPrompt();
 });
 
+//Fills the product array to be used for viewing data and updating DB
 function fillItemArr () {
 	productArr = [];
 	connection.query("SELECT * FROM products", function (error, results) {
@@ -27,6 +28,7 @@ function fillItemArr () {
 	});
 }
 
+//allows manager to view data or update DB
 function managerPrompt () {
 	inquirer.prompt([{
 		type: "list",
